@@ -1,69 +1,29 @@
-import React, { useState, useEffect } from 'react';
-// import { useContributions } from '../../../hooks/useContributions';
-// import Card from '../../shared/Card';
-// import Loading from '../../shared/Loading';
-// import ContributionFilters from './ContributionFilters';
+
+import React from 'react';
 import Loading from '../shared/Loading';
 import Card from '../shared/Card';
 import ContributionFilters from './ContributionFilters';
-import { useContributions } from '../hooks/useContributions';
-import { getContributions } from '../../services/contributionService';
 import { Contribution } from '../../types/contribution.types';
-import { useAuth } from '../hooks/useAuth';
-
-// interface Contribution {
-//   id: string;
-//   type: 'mandatory' | 'voluntary';
-//   amount: number;
-//   date: string;
-//   description?: string;
-//   status: 'pending' | 'processed' | 'rejected';
-// }
 
 interface ContributionHistoryProps {
+  contributions: Contribution[];
+  isLoading: boolean;
   limit?: number;
   showFilters?: boolean;
   title?: string;
+  onFilterChange?: (filters: any) => void;
 }
 
 const ContributionHistory: React.FC<ContributionHistoryProps> = ({
+  contributions,
+  isLoading,
   limit,
-  showFilters = true,
+  showFilters = false,
   title = 'Contribution History',
+  onFilterChange,
 }) => {
-    const { authState: { user } } = useAuth();
-  // const { getContributions, isLoading } = useContributions();
-  const { isLoading } = useContributions();
-  const [contributions, setContributions] = useState<Contribution[]>([]);
-  const [filters, setFilters] = useState({
-    startDate: '',
-    endDate: '',
-    type: 'all',
-    status: 'all',
-    sortBy: 'date',
-    sortOrder: 'desc',
-  });
-
-  const fetchContributions = async () => {
-    try {
-      // const result = await getContributions(filters);
-      const result = await getContributions(user!.id);
-      // If limit is provided, only show that many contributions
-      // setContributions(limit ? result.slice(0, limit) : result);
-      setContributions(result);
-    } catch (error) {
-      console.error('Failed to fetch contributions:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchContributions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
-
-  const handleFilterChange = (newFilters: any) => {
-    setFilters({ ...filters, ...newFilters });
-  };
+  // Apply limit if provided
+  const displayedContributions = limit ? contributions.slice(0, limit) : contributions;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,15 +62,15 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
 
   return (
     <Card title={title}>
-      {showFilters && (
+      {showFilters && onFilterChange && (
         <div className="mb-6">
-          <ContributionFilters onFilterChange={handleFilterChange} />
+          <ContributionFilters onFilterChange={onFilterChange} />
         </div>
       )}
 
       {isLoading ? (
         <Loading text="Loading contributions..." />
-      ) : contributions.length === 0 ? (
+      ) : displayedContributions.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">No contributions found matching your filters.</p>
         </div>
@@ -152,7 +112,7 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {contributions.map((contribution) => (
+              {displayedContributions.map((contribution) => (
                 <tr key={contribution.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(contribution.date)}
@@ -191,4 +151,4 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
   );
 };
 
-export default ContributionHistory;
+export default ContributionHistory

@@ -6,7 +6,6 @@ import Card from "../components/shared/Card";
 import Navbar from "../components/shared/Navbar";
 import Sidebar from "../components/shared/Sidebar";
 import Loading from "../components/shared/Loading";
-import { ContributionType } from "../types/contribution.types";
 import { useContributions } from "../components/hooks/useContributions";
 import { useAuth } from "../components/hooks/useAuth";
 
@@ -17,10 +16,11 @@ const ContributionsPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({
     type: "all",
-    startDate: null,
-    endDate: null,
+    status: "all", // Added status filter
+    startDate: "",
+    endDate: "",
     sortBy: "date",
-    sortDirection: "desc",
+    sortOrder: "desc", // Changed from sortDirection to sortOrder to match ContributionFilters
   });
 
   useEffect(() => {
@@ -40,12 +40,19 @@ const ContributionsPage: React.FC = () => {
       );
     }
 
+    // Filter by status
+    if (filters.status !== "all") {
+      filtered = filtered.filter(
+        (contribution) => contribution.status === filters.status
+      );
+    }
+
     // Filter by date range
     if (filters.startDate && filters.endDate) {
       filtered = filtered.filter(
         (contribution) =>
-          new Date(contribution.date) >= new Date(filters.startDate! as string) &&
-          new Date(contribution.date) <= new Date(filters.endDate! as string)
+          new Date(contribution.date) >= new Date(filters.startDate) &&
+          new Date(contribution.date) <= new Date(filters.endDate)
       );
     }
 
@@ -54,11 +61,19 @@ const ContributionsPage: React.FC = () => {
       if (filters.sortBy === "date") {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
-        return filters.sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+        return filters.sortOrder === "asc" ? dateA - dateB : dateB - dateA;
       } else if (filters.sortBy === "amount") {
-        return filters.sortDirection === "asc"
+        return filters.sortOrder === "asc"
           ? a.amount - b.amount
           : b.amount - a.amount;
+      } else if (filters.sortBy === "type") {
+        return filters.sortOrder === "asc"
+          ? a.type.localeCompare(b.type)
+          : b.type.localeCompare(a.type);
+      } else if (filters.sortBy === "status") {
+        return filters.sortOrder === "asc"
+          ? a.status.localeCompare(b.status)
+          : b.status.localeCompare(a.status);
       }
       return 0;
     });
@@ -111,6 +126,7 @@ const ContributionsPage: React.FC = () => {
             <ContributionHistory
               contributions={filteredContributions}
               isLoading={isLoading}
+              showFilters={false} // Don't show filters since we're already showing them above
             />
           </Card>
         </main>

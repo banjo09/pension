@@ -1,19 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../shared/Button';
-// import Button from '../../shared/Button';
 
-interface ContributionFiltersProps {
-  onFilterChange: (filters: any) => void;
+interface Filters {
+  startDate: string;
+  endDate: string;
+  type: string;
+  status: string;
+  sortBy: string;
+  sortOrder: string;
 }
 
-const ContributionFilters: React.FC<ContributionFiltersProps> = ({ onFilterChange }) => {
+interface ContributionFiltersProps {
+  filters?: Filters;
+  onFilterChange: (filters: Filters) => void;
+}
+
+const ContributionFilters: React.FC<ContributionFiltersProps> = ({ 
+  filters: initialFilters, 
+  onFilterChange 
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [type, setType] = useState('all');
-  const [status, setStatus] = useState('all');
-  const [sortBy, setSortBy] = useState('date');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [startDate, setStartDate] = useState(initialFilters?.startDate || '');
+  const [endDate, setEndDate] = useState(initialFilters?.endDate || '');
+  const [type, setType] = useState(initialFilters?.type || 'all');
+  const [status, setStatus] = useState(initialFilters?.status || 'all');
+  const [sortBy, setSortBy] = useState(initialFilters?.sortBy || 'date');
+  const [sortOrder, setSortOrder] = useState(initialFilters?.sortOrder || 'desc');
+
+  // Update local state when props change
+  useEffect(() => {
+    if (initialFilters) {
+      setStartDate(initialFilters.startDate || '');
+      setEndDate(initialFilters.endDate || '');
+      setType(initialFilters.type || 'all');
+      setStatus(initialFilters.status || 'all');
+      setSortBy(initialFilters.sortBy || 'date');
+      setSortOrder(initialFilters.sortOrder || 'desc');
+    }
+  }, [initialFilters]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,3 +193,4 @@ const ContributionFilters: React.FC<ContributionFiltersProps> = ({ onFilterChang
 };
 
 export default ContributionFilters;
+
