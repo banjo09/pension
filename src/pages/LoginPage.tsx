@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
 import { LoginCredentials } from '../types/auth.types';
+import { useAuth } from '../components/hooks/useAuth';
 
 // Validation schema
 const loginSchema = yup.object({

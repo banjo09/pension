@@ -12,7 +12,7 @@ import { useAuth } from "../components/hooks/useAuth";
 
 const ContributionsPage: React.FC = () => {
   const { authState: { user } } = useAuth();
-  const { contributions, fetchContributions, addContribution, isLoading } = useContributions();
+  const { contributions, fetchContributions, createContribution, isLoading } = useContributions();
   const [filteredContributions, setFilteredContributions] = useState(contributions);
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({
@@ -26,7 +26,6 @@ const ContributionsPage: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchContributions();
-      // fetchContributions(user.id);
     }
   }, [user, fetchContributions]);
 
@@ -71,24 +70,8 @@ const ContributionsPage: React.FC = () => {
     setFilters({ ...filters, ...newFilters });
   };
 
-  const handleSubmitContribution = async (
-    contributionData: {
-      amount: number;
-      date: Date;
-      type: ContributionType;
-      description: string;
-    }
-  ) => {
-    if (user) {
-      await addContribution({
-        ...contributionData,
-        userId: user.id,
-        id: Date.now().toString(), // Temporary ID for mock data
-        status: "pending",
-        createdAt: new Date().toISOString(),
-      });
-      setShowForm(false);
-    }
+  const handleSubmitSuccess = () => {
+    setShowForm(false);
   };
 
   if (isLoading) {
@@ -113,25 +96,21 @@ const ContributionsPage: React.FC = () => {
 
           {showForm && (
             <Card className="mb-6">
-              <ContributionForm
-                // onSubmit={handleSubmitContribution}
-                // existingContributions={contributions}
-                onSubmitSuccess={() => { }}
-              />
+              <ContributionForm onSubmitSuccess={handleSubmitSuccess} />
             </Card>
           )}
 
           <Card className="mb-6">
             <ContributionFilters
-              // filters={filters}
+              filters={filters}
               onFilterChange={handleFilterChange}
             />
           </Card>
 
           <Card>
             <ContributionHistory
-              // contributions={filteredContributions}
-              // isLoading={isLoading}
+              contributions={filteredContributions}
+              isLoading={isLoading}
             />
           </Card>
         </main>

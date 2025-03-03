@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react';
-// import Card from '../../shared/Card';
-// import Button from '../../shared/Button';
-// import { useContributions } from '../../../hooks/useContributions';
 import Card from '../shared/Card';
 import Button from '../shared/Button';
 import { useContributions } from '../hooks/useContributions';
+import { ContributionType } from '../../types/contribution.types';
 
 interface ContributionFormProps {
   onSubmitSuccess: () => void;
 }
 
 const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) => {
-  const [contributionType, setContributionType] = useState<'mandatory' | 'voluntary'>('mandatory');
+  const [contributionType, setContributionType] = useState<ContributionType>('mandatory');
   const [amount, setAmount] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { addContribution, checkDuplicateContribution, validateMandatoryContribution, isLoading } = useContributions();
+  const { createContribution, validateContribution, isLoading } = useContributions();
 
   // Set default date to today
   useEffect(() => {
@@ -49,31 +47,17 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) 
       }
     }
     
-    // For mandatory contributions, validate one per month
-    if (contributionType === 'mandatory') {
-      try {
-        const isValid = await validateMandatoryContribution(date);
-        if (!isValid) {
-          newErrors.date = 'Only one mandatory contribution is allowed per month';
-        }
-      } catch (error) {
-        newErrors.date = 'Error validating contribution date';
-      }
-    }
+    // Validate contribution using the hook's validateContribution method
+    const contributionData = {
+      type: contributionType,
+      amount: parseFloat(amount),
+      date,
+      description: description.trim() || undefined,
+    };
     
-    // Check for duplicate contributions
-    try {
-      const isDuplicate = await checkDuplicateContribution({
-        type: contributionType,
-        amount: parseFloat(amount),
-        date,
-      });
-      
-      if (isDuplicate) {
-        newErrors.form = 'A duplicate contribution already exists';
-      }
-    } catch (error) {
-      newErrors.form = 'Error checking for duplicate contributions';
+    const validation = validateContribution(contributionData);
+    if (!validation.isValid && validation.message) {
+      newErrors.form = validation.message;
     }
     
     setErrors(newErrors);
@@ -87,20 +71,22 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) 
     if (!isValid) return;
     
     try {
-      await addContribution({
+      const success = await createContribution({
         type: contributionType,
         amount: parseFloat(amount),
         date,
         description: description.trim() || undefined,
       });
       
-      // Reset form
-      setAmount('');
-      setDescription('');
-      const today = new Date();
-      setDate(today.toISOString().split('T')[0]);
-      
-      onSubmitSuccess();
+      if (success) {
+        // Reset form
+        setAmount('');
+        setDescription('');
+        const today = new Date();
+        setDate(today.toISOString().split('T')[0]);
+        
+        onSubmitSuccess();
+      }
     } catch (error) {
       setErrors({ form: 'Failed to submit contribution. Please try again.' });
     }

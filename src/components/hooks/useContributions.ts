@@ -1,17 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { RootState, AppDispatch } from "../services/store";
-// import { fetchContributions, addNewContribution } from "../services/store";
-// import { Contribution, ContributionType } from '../types/contribution.types';
-import { useNotifications } from "./useNotifications";
-// import { validateContribution } from "../services/contributionService";
 import { Contribution, ContributionType } from "../../types/contribution.types";
 import {
   addNewContribution,
   AppDispatch,
-  fetchContributions,
+  fetchContributions as fetchContributionsAction,
   RootState,
 } from "../../services/store";
+import { useNotifications } from "./useNotifications";
 
 // Define contribution type formats for clarity
 export const formatContributionType = {
@@ -42,11 +38,11 @@ export const useContributions = () => {
   }, [storeError]);
 
   // Fetch contributions
-  const fetchUserContributions = useCallback(async () => {
+  const fetchContributions = useCallback(async () => {
     if (!user?.id) return;
 
     try {
-      await dispatch(fetchContributions(user.id)).unwrap();
+      await dispatch(fetchContributionsAction(user.id)).unwrap();
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -57,7 +53,7 @@ export const useContributions = () => {
   }, [dispatch, user?.id]);
 
   // Validate contribution based on business rules
-  const validateUserContribution = useCallback(
+  const validateContribution = useCallback(
     (
       contribution: Partial<Contribution>
     ): { isValid: boolean; message?: string } => {
@@ -124,10 +120,58 @@ export const useContributions = () => {
     [contributions]
   );
 
+  // Check for duplicate contributions - compatibility function for the form
+  const checkDuplicateContribution = useCallback(
+    (contributionData: Partial<Contribution>): Promise<boolean> => {
+      return new Promise((resolve) => {
+        // Check for an identical contribution (same date, type, and amount)
+        const duplicate = contributions.some((c: Contribution) => {
+          const sameDate = c.date === contributionData.date;
+          const sameType = c.type === contributionData.type;
+          const sameAmount = c.amount === contributionData.amount;
+          
+          return sameDate && sameType && sameAmount;
+        });
+        
+        resolve(duplicate);
+      });
+    },
+    [contributions]
+  );
+
+  // Validate mandatory contribution - compatibility function for the form
+  const validateMandatoryContribution = useCallback(
+    (date: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        if (!date) {
+          resolve(false);
+          return;
+        }
+        
+        const contributionDate = new Date(date);
+        const contributionMonth = contributionDate.getMonth();
+        const contributionYear = contributionDate.getFullYear();
+        
+        // Check if there's already a mandatory contribution in this month
+        const existingContribution = contributions.find((c: Contribution) => {
+          if (c.type !== formatContributionType.MANDATORY) return false;
+          
+          const existingDate = new Date(c.date);
+          return (
+            existingDate.getMonth() === contributionMonth &&
+            existingDate.getFullYear() === contributionYear
+          );
+        });
+        
+        resolve(!existingContribution);
+      });
+    },
+    [contributions]
+  );
+
   // Create new contribution
   const createContribution = useCallback(
-    // async (contribution: Omit<Contribution, "id" | "userId" | "status">) => {
-    async (contribution: Omit<Contribution, "id">) => {
+    async (contribution: Omit<Contribution, "id" | "userId" | "status">) => {
       if (!user?.id) {
         showToast({
           type: "error",
@@ -138,7 +182,7 @@ export const useContributions = () => {
       }
 
       // Validate contribution before dispatching
-      const validation = validateUserContribution(contribution);
+      const validation = validateContribution(contribution);
       if (!validation.isValid) {
         setError(validation.message || "Invalid contribution");
         showToast({
@@ -154,7 +198,12 @@ export const useContributions = () => {
         await dispatch(
           addNewContribution({
             userId: user.id,
-            contribution,
+            contribution: {
+              ...contribution,
+              status: "pending",
+              userId: user.id,
+              // createdAt: new Date().toISOString()
+            },
           })
         ).unwrap();
 
@@ -189,8 +238,11 @@ export const useContributions = () => {
         return false;
       }
     },
-    [user?.id, dispatch, validateUserContribution, showToast, addNotification]
+    [user?.id, dispatch, validateContribution, showToast, addNotification]
   );
+
+  // Add contribution - alias for createContribution for backwards compatibility
+  const addContribution = createContribution;
 
   // Get contribution statistics
   const getContributionStats = useCallback(() => {
@@ -249,17 +301,20 @@ export const useContributions = () => {
   // Load contributions on component mount
   useEffect(() => {
     if (user?.id) {
-      fetchUserContributions();
+      fetchContributions();
     }
-  }, [fetchUserContributions, user?.id]);
+  }, [fetchContributions, user?.id]);
 
   return {
     contributions,
     isLoading,
     error,
-    fetchContributions: fetchUserContributions,
+    fetchContributions,
     createContribution,
-    validateContribution: validateUserContribution,
+    addContribution,
+    validateContribution,
+    validateMandatoryContribution,
+    checkDuplicateContribution,
     getContributionStats,
   };
 };

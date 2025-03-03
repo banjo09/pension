@@ -5,24 +5,27 @@ import DataVisualizations from "../components/dashboard/DataVisualizations";
 import Navbar from "../components/shared/Navbar";
 import Sidebar from "../components/shared/Sidebar";
 import Loading from "../components/shared/Loading";
-import { useAuth } from "../hooks/useAuth";
-import { useContributions } from "../hooks/useContributions";
+import { useAuth } from "../components/hooks/useAuth";
+import { useContributions } from "../components/hooks/useContributions";
 
 const DashboardPage: React.FC = () => {
-  const { user, isLoading: authLoading } = useAuth();
+  // const { user, isLoading: authLoading } = useAuth();
+  const { authState: { user, isLoading: authLoading } } = useAuth();
+
   const { contributions, fetchContributions, isLoading: contributionsLoading } = useContributions();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (user) {
-      fetchContributions(user.id);
+      // fetchContributions(user.id);
+      fetchContributions();
     }
-    
+
     // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, [user, fetchContributions]);
 
@@ -32,24 +35,28 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar isOpen={true} toggleSidebar={() => { }} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar />
+        <Navbar toggleSidebar={() => { }} toggleNotifications={() => { }} />
         <main className="flex-1 p-6 overflow-y-auto">
           <h1 className="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
-          
+
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Member Profile Section */}
             <div className="lg:col-span-1">
-              <MemberProfile user={user} />
+              <MemberProfile
+                // user={user!}
+                profile={user!}
+                isLoading={authLoading}
+              />
             </div>
-            
+
             {/* Contribution Statistics */}
             <div className="lg:col-span-2">
               <ContributionStats contributions={contributions} />
             </div>
           </div>
-          
+
           {/* Data Visualizations */}
           <div className="mt-6">
             <DataVisualizations contributions={contributions} />
