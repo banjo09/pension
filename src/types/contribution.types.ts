@@ -1,5 +1,5 @@
-export type ContributionType = 'mandatory' | 'voluntary';
-export type ContributionStatus = 'pending' | 'approved' | 'rejected';
+export type ContributionType = "mandatory" | "voluntary";
+export type ContributionStatus = "pending" | "approved" | "rejected";
 
 export interface Contribution {
   id: string;
@@ -11,6 +11,7 @@ export interface Contribution {
   description?: string;
   employerPortion?: number;
   employeePortion?: number;
+  reference?: string;
 }
 
 export interface ContributionSummary {

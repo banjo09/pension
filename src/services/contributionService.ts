@@ -10,21 +10,39 @@ import {
   mockGetContributionSummary 
 } from '../mock/mockData';
 
+/**
+ * Get all contributions for a user
+ */
 export const getContributions = async (userId: string): Promise<Contribution[]> => {
+  // In production, you would use:
+  // return api.get(`/users/${userId}/contributions`).then(res => res.data);
   return mockGetContributions(userId);
 };
 
+/**
+ * Add a new contribution for a user
+ */
 export const addContribution = async (
   userId: string, 
   contribution: Omit<Contribution, 'id' | 'userId' | 'status'>
 ): Promise<Contribution> => {
+  // In production, you would use:
+  // return api.post(`/users/${userId}/contributions`, contribution).then(res => res.data);
   return mockAddContribution(userId, contribution);
 };
 
+/**
+ * Get contribution summary statistics for a user
+ */
 export const getContributionSummary = async (userId: string): Promise<ContributionSummary> => {
+  // In production, you would use:
+  // return api.get(`/users/${userId}/contributions/summary`).then(res => res.data);
   return mockGetContributionSummary(userId);
 };
 
+/**
+ * Validate a contribution based on business rules
+ */
 export const validateContribution = (
   date: string, 
   type: ContributionType, 
@@ -56,6 +74,9 @@ export const validateContribution = (
       };
     }
   }
+  
+  // Check for duplicate reference numbers
+  // Would normally be implemented here, but would need the reference to check
   
   return { valid: true };
 };
