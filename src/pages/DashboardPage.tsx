@@ -1,67 +1,71 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useAuth } from "../components/hooks/useAuth";
+import { useContributions } from "../components/hooks/useContributions";
 import MemberProfile from "../components/dashboard/MemberProfile";
 import ContributionStats from "../components/dashboard/ContributionStats";
 import DataVisualizations from "../components/dashboard/DataVisualizations";
-import Navbar from "../components/shared/Navbar";
-import Sidebar from "../components/shared/Sidebar";
-import Loading from "../components/shared/Loading";
-import { useAuth } from "../components/hooks/useAuth";
-import { useContributions } from "../components/hooks/useContributions";
+// import { useContributions } from "../../hooks/useContributions";
+// import { useAuth } from "../../contexts/AuthContext";
+// import MemberProfile from "../profile/MemberProfile";
+// import ContributionStats from "../contributions/ContributionStats";
+// import DataVisualizations from "../visualizations/DataVisualizations";
 
 const DashboardPage: React.FC = () => {
-  // const { user, isLoading: authLoading } = useAuth();
-  const { authState: { user, isLoading: authLoading } } = useAuth();
-
-  const { contributions, fetchContributions, isLoading: contributionsLoading } = useContributions();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { authState } = useAuth();
+  const { 
+    fetchContributions, 
+    isLoading, 
+    error, 
+    contributions,
+    getContributionStats 
+  } = useContributions();
 
   useEffect(() => {
-    if (user) {
-      // fetchContributions(user.id);
+    if (authState.user?.id) {
       fetchContributions();
     }
+  }, [authState.user?.id, fetchContributions]);
 
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [user, fetchContributions]);
-
-  if (authLoading || isLoading) {
-    return <Loading />;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading dashboard...</div>;
   }
 
+  if (error) {
+    return (
+      <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4">
+        Error loading dashboard: {error}
+      </div>
+    );
+  }
+
+  const stats = getContributionStats();
+
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar isOpen={true} toggleSidebar={() => { }} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar toggleSidebar={() => { }} toggleNotifications={() => { }} />
-        <main className="flex-1 p-6 overflow-y-auto">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Member Profile Section */}
-            <div className="lg:col-span-1">
-              <MemberProfile
-                // user={user!}
-                profile={user!}
-                isLoading={authLoading}
-              />
-            </div>
-
-            {/* Contribution Statistics */}
-            <div className="lg:col-span-2">
-              <ContributionStats contributions={contributions} />
-            </div>
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-6">Member Dashboard</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column */}
+        <div className="lg:col-span-1">
+          <MemberProfile user={authState.user} />
+        </div>
+        
+        {/* Right column (2/3 width on large screens) */}
+        <div className="lg:col-span-2">
+          <div className="mb-6">
+            <ContributionStats stats={stats} />
           </div>
-
-          {/* Data Visualizations */}
-          <div className="mt-6">
-            <DataVisualizations contributions={contributions} />
+          
+          <div>
+            <DataVisualizations 
+              // contributions={contributions} 
+              // monthlyData={stats.monthlyData} 
+              userId={authState.user?.id}
+              isLoading={isLoading}
+              error={error ?? undefined}
+            />
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

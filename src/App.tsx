@@ -11,7 +11,7 @@ import StatementsPage from "./pages/StatementsPage";
 
 // Components
 import AuthGuard from "./components/auth/AuthGuard";
-import ToastNotification from "./components/notifications/ToastNotification";
+// import ToastNotification from "./components/notifications/ToastNotification";
 import { NotificationProvider } from "./context/NotificationContext";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -26,7 +26,7 @@ const App: React.FC = () => {
                 {/* Public routes */}
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                
+
                 {/* Protected routes */}
                 <Route
                   path="/dashboard"
@@ -52,11 +52,16 @@ const App: React.FC = () => {
                     </AuthGuard>
                   }
                 />
-                
+
                 {/* Fallback route */}
                 <Route path="*" element={<LoginPage />} />
               </Routes>
-              <ToastNotification />
+              {/* <ToastNotification
+                message={notification.message}
+                type={notification.type}
+                onClose={() => {}}
+                id={(Math.random() * 100).toString()}
+              /> */}
             </div>
           </Router>
         </NotificationProvider>

@@ -5,7 +5,7 @@ export interface Contribution {
   id: string;
   userId: string;
   amount: number;
-  date: string;
+  date: Date;
   type: ContributionType;
   status: ContributionStatus;
   description?: string;

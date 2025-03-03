@@ -51,7 +51,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) 
     const contributionData = {
       type: contributionType,
       amount: parseFloat(amount),
-      date,
+      date: (date as unknown as Date),
       description: description.trim() || undefined,
     };
     
@@ -74,7 +74,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) 
       const success = await createContribution({
         type: contributionType,
         amount: parseFloat(amount),
-        date,
+        date: (date as unknown as Date),
         description: description.trim() || undefined,
       });
       

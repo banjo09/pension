@@ -3,14 +3,15 @@ import { jsPDF } from 'jspdf';
 // import 'jspdf-autotable';
 import DateRangeSelector from './DateRangeSelector';
 import { User } from '../../types/user.types';
+import { Contribution } from '../../types/contribution.types';
 
-interface Contribution {
-  id: string;
-  date: Date;
-  amount: number;
-  type: 'Mandatory' | 'Voluntary';
-  status: 'Processed' | 'Pending' | 'Failed';
-}
+// interface Contribution {
+//   id: string;
+//   date: Date;
+//   amount: number;
+//   type: 'Mandatory' | 'Voluntary';
+//   status: 'Processed' | 'Pending' | 'Failed';
+// }
 
 // interface User {
 //   id: string;
@@ -51,11 +52,11 @@ const StatementGenerator: React.FC<StatementGeneratorProps> = ({
 
   const calculateTotals = () => {
     const mandatory = filteredContributions
-      .filter(c => c.type === 'Mandatory' && c.status === 'Processed')
+      .filter(c => c.type === 'mandatory' && c.status === 'pending')
       .reduce((sum, c) => sum + c.amount, 0);
     
     const voluntary = filteredContributions
-      .filter(c => c.type === 'Voluntary' && c.status === 'Processed')
+      .filter(c => c.type === 'voluntary' && c.status === 'pending')
       .reduce((sum, c) => sum + c.amount, 0);
       
     return { mandatory, voluntary, total: mandatory + voluntary };
@@ -328,7 +329,7 @@ const StatementGenerator: React.FC<StatementGeneratorProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(contribution.date)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        contribution.type === 'Mandatory' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                        contribution.type === 'mandatory' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                       }`}>
                         {contribution.type}
                       </span>
@@ -336,9 +337,9 @@ const StatementGenerator: React.FC<StatementGeneratorProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">{formatCurrency(contribution.amount)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        contribution.status === 'Processed' 
+                        contribution.status === 'approved' 
                           ? 'bg-green-100 text-green-800' 
-                          : contribution.status === 'Pending' 
+                          : contribution.status === 'pending' 
                             ? 'bg-yellow-100 text-yellow-800' 
                             : 'bg-red-100 text-red-800'
                       }`}>

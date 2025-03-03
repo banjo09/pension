@@ -151,7 +151,7 @@ export const addNewContribution = createAsyncThunk(
       const existingContributions = state.contributions.contributions;
 
       const validation = contributionService.validateContribution(
-        contribution.date,
+        (contribution.date as unknown as string),
         contribution.type,
         existingContributions
       );

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Contribution } from '../../types/contribution.types';
 
-interface Contribution {
-  id: string;
-  date: Date;
-  amount: number;
-  type: 'Mandatory' | 'Voluntary';
-  status: 'Processed' | 'Pending' | 'Failed';
-}
+// interface Contribution {
+//   id: string;
+//   date: Date;
+//   amount: number;
+//   type: 'Mandatory' | 'Voluntary';
+//   status: 'Processed' | 'Pending' | 'Failed';
+// }
 
 interface BenefitCalculatorProps {
   contributions: Contribution[];
@@ -42,7 +43,7 @@ const BenefitCalculator: React.FC<BenefitCalculatorProps> = ({
     if (!isLoading && contributions.length > 0) {
       // Calculate current balance
       const totalProcessed = contributions
-        .filter(c => c.status === 'Processed')
+        .filter(c => c.status === 'pending')
         .reduce((sum, c) => sum + c.amount, 0);
         
       setCurrentBalance(totalProcessed);
@@ -63,7 +64,7 @@ const BenefitCalculator: React.FC<BenefitCalculatorProps> = ({
     setTimeout(() => {
       try {
         // Calculate average monthly contribution
-        const processedContributions = contributions.filter(c => c.status === 'Processed');
+        const processedContributions = contributions.filter(c => c.status === 'pending');
         
         if (processedContributions.length === 0) {
           setProjectedBalance(0);

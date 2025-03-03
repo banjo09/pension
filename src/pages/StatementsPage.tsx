@@ -6,8 +6,9 @@ import Card from "../components/shared/Card";
 import Navbar from "../components/shared/Navbar";
 import Sidebar from "../components/shared/Sidebar";
 import Loading from "../components/shared/Loading";
-import { useAuth } from "../context/AuthContext";
+// import { useAuth } from "../context/AuthContext";
 import { useContributions } from "../components/hooks/useContributions";
+import { useAuth } from "../components/hooks/useAuth";
 // import { useAuth } from "../hooks/useAuth";
 // import { useContributions } from "../hooks/useContributions";
 
@@ -89,8 +90,8 @@ const StatementsPage: React.FC = () => {
               <BenefitCalculator
                 contributions={contributions}
                 age={34}
-                // age={user.}
-                // retirementAge={user}
+              // age={user.}
+              // retirementAge={user}
 
 
               />
@@ -102,6 +103,7 @@ const StatementsPage: React.FC = () => {
               contributions={filteredContributions}
               // dateRange={dateRange}
               userData={user!}
+              isLoading={isLoading}
             />
           </Card>
         </main>

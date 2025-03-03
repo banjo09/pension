@@ -27,6 +27,7 @@ const LoginPage: React.FC = () => {
       await login(data);
       navigate('/dashboard');
     } catch (error) {
+      console.log('error', error)
       // Error is handled in auth context
     }
   };

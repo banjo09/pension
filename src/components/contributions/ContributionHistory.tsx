@@ -25,7 +25,7 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
   // Apply limit if provided
   const displayedContributions = limit ? contributions.slice(0, limit) : contributions;
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',

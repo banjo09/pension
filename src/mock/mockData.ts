@@ -72,7 +72,7 @@ const mockContributions: Record<string, Contribution[]> = {
       id: 'c1',
       userId: '1',
       amount: 25000,
-      date: '2025-01-15',
+      date: new Date('2025-01-15'),
       type: 'mandatory',
       status: 'approved',
       employerPortion: 12500,
@@ -82,7 +82,7 @@ const mockContributions: Record<string, Contribution[]> = {
       id: 'c2',
       userId: '1',
       amount: 10000,
-      date: '2025-01-20',
+      date: new Date('2025-01-20'),
       type: 'voluntary',
       status: 'approved',
       description: 'Additional contribution'
@@ -91,7 +91,7 @@ const mockContributions: Record<string, Contribution[]> = {
       id: 'c3',
       userId: '1',
       amount: 25000,
-      date: '2024-12-15',
+      date: new Date('2024-12-15'),
       type: 'mandatory',
       status: 'approved',
       employerPortion: 12500,
@@ -101,7 +101,7 @@ const mockContributions: Record<string, Contribution[]> = {
       id: 'c4',
       userId: '1',
       amount: 25000,
-      date: '2024-11-15',
+      date: new Date('2024-11-15'),
       type: 'mandatory',
       status: 'approved',
       employerPortion: 12500,
@@ -111,7 +111,7 @@ const mockContributions: Record<string, Contribution[]> = {
       id: 'c5',
       userId: '1',
       amount: 15000,
-      date: '2024-11-25',
+      date: new Date('2024-11-25'),
       type: 'voluntary',
       status: 'approved',
       description: 'End of year contribution'
@@ -260,8 +260,9 @@ export const mockGetContributionSummary = (userId: string): Promise<Contribution
       const sortedContributions = [...contributions].sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-      const lastContributionDate = sortedContributions.length > 0 
-        ? sortedContributions[0].date 
+      // lastContributionDate:(lastContributionDate as unknown as Date),
+      const lastContributionDate  = sortedContributions.length > 0 
+        ? (sortedContributions[0].date as unknown as string)
         : '';
       
       // Calculate growth (simplified)
