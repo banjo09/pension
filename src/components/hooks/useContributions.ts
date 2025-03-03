@@ -1,20 +1,28 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Contribution, ContributionType } from '../types/contribution.types';
-import { contributionService } from '../services/contributionService';
+// import { Contribution, ContributionType } from '../types/contribution.types';
+// import { contributionService } from '../services/contributionService';
 import { useNotifications } from './useNotifications';
+import { Contribution, } from '../../types/contribution.types';
+import { addContribution, getContributions } from '../../services/contributionService';
+import { useAuth } from './useAuth';
+// import { formatContributionType } from '../../utils/formatters';
+
 
 export const useContributions = () => {
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { showToast, addNotification } = useNotifications();
+    const { authState: { user } } = useAuth();
+  
 
   // Fetch contributions
   const fetchContributions = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await contributionService.getContributions();
+      // const data = await contributionService.getContributions();
+      const data = await getContributions(user!.id);
       setContributions(data);
     } catch (error) {
       if (error instanceof Error) {
@@ -35,7 +43,7 @@ export const useContributions = () => {
     }
 
     // For mandatory contributions, check if there's already one in the current month
-    if (contribution.type === ContributionType.MANDATORY) {
+    if (contribution.type === formatContributionType.MANDATORY) {
       // Get the year and month of the contribution
       const contributionDate = new Date(contribution.date as string);
       const contributionMonth = contributionDate.getMonth();
@@ -93,7 +101,8 @@ export const useContributions = () => {
     }
     
     try {
-      const newContribution = await contributionService.createContribution(contribution);
+      const newContribution = await addContribution(user!.id, contribution);
+      // const newContribution = await contributionService.createContribution(contribution);
       setContributions(prev => [...prev, newContribution]);
       
       showToast({

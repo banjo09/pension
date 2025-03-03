@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Menu, User, LogOut } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
+// import { useAuth } from '../../hooks/useAuth';
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -9,7 +10,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, toggleNotifications }) => {
-  const { user, logout } = useAuth();
+    const { authState: { user }, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
@@ -60,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, toggleNotifications }) =
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow z-50">
                   <div className="px-4 py-3 text-sm text-gray-900">
-                    <div>{user?.name}</div>
+                    <div>{user?.fullName}</div>
                     <div className="font-medium truncate">{user?.email}</div>
                   </div>
                   <ul className="py-2 text-sm text-gray-700">

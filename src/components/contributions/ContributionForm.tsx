@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 // import Card from '../../shared/Card';
 // import Button from '../../shared/Button';
-import { useContributions } from '../../../hooks/useContributions';
+// import { useContributions } from '../../../hooks/useContributions';
 import Card from '../shared/Card';
 import Button from '../shared/Button';
+import { useContributions } from '../hooks/useContributions';
 
 interface ContributionFormProps {
   onSubmitSuccess: () => void;
@@ -15,6 +16,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ onSubmitSuccess }) 
   const [date, setDate] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
   const { addContribution, checkDuplicateContribution, validateMandatoryContribution, isLoading } = useContributions();
 
   // Set default date to today

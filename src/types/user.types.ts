@@ -8,6 +8,7 @@ export interface User {
   dateOfBirth: string;
   phoneNumber: string;
   address: string;
+  photoUrl?: string;
 }
 
 export interface NextOfKin {

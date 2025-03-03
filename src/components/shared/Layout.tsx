@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+// import { useAuth } from '../../context/AuthContext';
 import ToastNotification from '../notifications/ToastNotification';
 import { NotificationType } from '../../types/notifications.types';
+import { useAuth } from '../hooks/useAuth';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     message: string;
     type: NotificationType;
   } | null>(null);
-  
+
   const handleLogout = async () => {
     await logout();
     setNotification({
@@ -26,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     });
     navigate('/login');
   };
-  
+
   // Define navigation items
   const navItems = [
     { name: 'Dashboard', path: '/dashboard' },
@@ -34,12 +35,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Statements', path: '/statements' },
     { name: 'Profile', path: '/profile' },
   ];
-  
+
   // Add admin-only items if user is admin
   if (authState.user?.role === 'admin') {
     navItems.push({ name: 'Admin', path: '/admin' });
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -50,25 +51,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex-shrink-0 flex items-center">
                 <span className="text-xl font-bold text-blue-600">Pension App</span>
               </div>
-              
+
               {/* Desktop Navigation */}
               <nav className="hidden md:ml-6 md:flex md:space-x-4">
                 {navItems.map((item) => (
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                      location.pathname === item.path
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${location.pathname === item.path
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
                   >
                     {item.name}
                   </Link>
                 ))}
               </nav>
             </div>
-            
+
             {/* User Menu */}
             <div className="flex items-center">
               <div className="hidden md:flex items-center">
@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                 )}
               </div>
-              
+
               {/* Mobile menu button */}
               <div className="md:hidden flex items-center">
                 <button
@@ -108,7 +108,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
-        
+
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
@@ -117,11 +117,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`block pl-3 pr-4 py-2 text-base font-medium ${
-                    location.pathname === item.path
-                      ? 'text-blue-600 bg-blue-50 border-l-4 border-blue-500'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
-                  }`}
+                  className={`block pl-3 pr-4 py-2 text-base font-medium ${location.pathname === item.path
+                    ? 'text-blue-600 bg-blue-50 border-l-4 border-blue-500'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
+                    }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
@@ -142,18 +141,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
       </header>
-      
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
-      
+
       {/* Notification Toast */}
       {notification && (
         <ToastNotification
           message={notification.message}
           type={notification.type}
           onClose={() => setNotification(null)}
+          id={(Math.random() * 100).toString()}
         />
       )}
     </div>

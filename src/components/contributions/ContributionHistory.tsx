@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useContributions } from '../../../hooks/useContributions';
+// import { useContributions } from '../../../hooks/useContributions';
 // import Card from '../../shared/Card';
 // import Loading from '../../shared/Loading';
 // import ContributionFilters from './ContributionFilters';
 import Loading from '../shared/Loading';
 import Card from '../shared/Card';
 import ContributionFilters from './ContributionFilters';
+import { useContributions } from '../hooks/useContributions';
+import { getContributions } from '../../services/contributionService';
+import { Contribution } from '../../types/contribution.types';
+import { useAuth } from '../hooks/useAuth';
 
-interface Contribution {
-  id: string;
-  type: 'mandatory' | 'voluntary';
-  amount: number;
-  date: string;
-  description?: string;
-  status: 'pending' | 'processed' | 'rejected';
-}
+// interface Contribution {
+//   id: string;
+//   type: 'mandatory' | 'voluntary';
+//   amount: number;
+//   date: string;
+//   description?: string;
+//   status: 'pending' | 'processed' | 'rejected';
+// }
 
 interface ContributionHistoryProps {
   limit?: number;
@@ -27,7 +31,9 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
   showFilters = true,
   title = 'Contribution History',
 }) => {
-  const { getContributions, isLoading } = useContributions();
+    const { authState: { user } } = useAuth();
+  // const { getContributions, isLoading } = useContributions();
+  const { isLoading } = useContributions();
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [filters, setFilters] = useState({
     startDate: '',
@@ -40,9 +46,11 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
 
   const fetchContributions = async () => {
     try {
-      const result = await getContributions(filters);
+      // const result = await getContributions(filters);
+      const result = await getContributions(user!.id);
       // If limit is provided, only show that many contributions
-      setContributions(limit ? result.slice(0, limit) : result);
+      // setContributions(limit ? result.slice(0, limit) : result);
+      setContributions(result);
     } catch (error) {
       console.error('Failed to fetch contributions:', error);
     }

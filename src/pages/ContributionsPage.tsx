@@ -6,12 +6,12 @@ import Card from "../components/shared/Card";
 import Navbar from "../components/shared/Navbar";
 import Sidebar from "../components/shared/Sidebar";
 import Loading from "../components/shared/Loading";
-import { useAuth } from "../hooks/useAuth";
-import { useContributions } from "../hooks/useContributions";
 import { ContributionType } from "../types/contribution.types";
+import { useContributions } from "../components/hooks/useContributions";
+import { useAuth } from "../components/hooks/useAuth";
 
 const ContributionsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { authState: { user } } = useAuth();
   const { contributions, fetchContributions, addContribution, isLoading } = useContributions();
   const [filteredContributions, setFilteredContributions] = useState(contributions);
   const [showForm, setShowForm] = useState(false);
@@ -25,30 +25,31 @@ const ContributionsPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      fetchContributions(user.id);
+      fetchContributions();
+      // fetchContributions(user.id);
     }
   }, [user, fetchContributions]);
 
   useEffect(() => {
     // Apply filters to contributions
     let filtered = [...contributions];
-    
+
     // Filter by type
     if (filters.type !== "all") {
       filtered = filtered.filter(
         (contribution) => contribution.type === filters.type
       );
     }
-    
+
     // Filter by date range
     if (filters.startDate && filters.endDate) {
       filtered = filtered.filter(
         (contribution) =>
-          new Date(contribution.date) >= new Date(filters.startDate as string) &&
-          new Date(contribution.date) <= new Date(filters.endDate as string)
+          new Date(contribution.date) >= new Date(filters.startDate! as string) &&
+          new Date(contribution.date) <= new Date(filters.endDate! as string)
       );
     }
-    
+
     // Sort contributions
     filtered.sort((a, b) => {
       if (filters.sortBy === "date") {
@@ -62,7 +63,7 @@ const ContributionsPage: React.FC = () => {
       }
       return 0;
     });
-    
+
     setFilteredContributions(filtered);
   }, [contributions, filters]);
 
@@ -96,9 +97,9 @@ const ContributionsPage: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar isOpen={true} toggleSidebar={() => { }} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar />
+        <Navbar toggleSidebar={() => { }} toggleNotifications={() => { }} />
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <h1 className="text-3xl font-semibold text-gray-800">Contributions</h1>
@@ -113,23 +114,24 @@ const ContributionsPage: React.FC = () => {
           {showForm && (
             <Card className="mb-6">
               <ContributionForm
-                onSubmit={handleSubmitContribution}
-                existingContributions={contributions}
+                // onSubmit={handleSubmitContribution}
+                // existingContributions={contributions}
+                onSubmitSuccess={() => { }}
               />
             </Card>
           )}
 
           <Card className="mb-6">
             <ContributionFilters
-              filters={filters}
+              // filters={filters}
               onFilterChange={handleFilterChange}
             />
           </Card>
 
           <Card>
             <ContributionHistory
-              contributions={filteredContributions}
-              isLoading={isLoading}
+              // contributions={filteredContributions}
+              // isLoading={isLoading}
             />
           </Card>
         </main>

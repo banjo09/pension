@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+// import 'jspdf-autotable';
 import DateRangeSelector from './DateRangeSelector';
 import { User } from '../../types/user.types';
 
