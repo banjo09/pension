@@ -8,6 +8,7 @@ export interface LoginCredentials {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  shouldRedirect: boolean;
   isLoading: boolean;
   error: string | null;
 }

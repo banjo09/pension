@@ -16,7 +16,6 @@ import { Notification } from "../types/notifications.types";
 import { Statement, StatementFilter } from "../types/statement.types";
 import { User, UserProfile } from "../types/user.types";
 
-// Mock Users
 const mockUsers: User[] = [
   {
     id: '1',
@@ -39,10 +38,20 @@ const mockUsers: User[] = [
     dateOfBirth: '1980-01-01',
     phoneNumber: '+2348098765432',
     address: '456 Admin Ave, Abuja, Nigeria'
+  },
+  {
+    id: '2',
+    fullName: 'Admin User',
+    email: 'ydjjd@hy.com',
+    password: 'ydjjd@hy.com',
+    role: 'admin',
+    profileImage: '/api/placeholder/150/150',
+    dateOfBirth: '1980-01-01',
+    phoneNumber: '+2348098765432',
+    address: '456 Admin Ave, Abuja, Nigeria'
   }
 ];
 
-// Mock User Profiles
 const mockUserProfiles: Record<string, UserProfile> = {
   '1': {
     ...mockUsers[0],
@@ -65,7 +74,6 @@ const mockUserProfiles: Record<string, UserProfile> = {
   }
 };
 
-// Mock Contributions
 const mockContributions: Record<string, Contribution[]> = {
   '1': [
     {
@@ -119,7 +127,6 @@ const mockContributions: Record<string, Contribution[]> = {
   ]
 };
 
-// Mock Notifications
 const mockNotifications: Record<string, Notification[]> = {
   '1': [
     {
@@ -143,7 +150,6 @@ const mockNotifications: Record<string, Notification[]> = {
   ]
 };
 
-// Mock Authentication
 export const mockLogin = (credentials: LoginCredentials): Promise<User> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -184,7 +190,6 @@ export const mockGetCurrentUser = (): Promise<User | null> => {
   });
 };
 
-// Mock User Profile
 export const mockGetUserProfile = (userId: string): Promise<UserProfile> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -198,7 +203,6 @@ export const mockGetUserProfile = (userId: string): Promise<UserProfile> => {
   });
 };
 
-// Mock Contributions
 export const mockGetContributions = (userId: string): Promise<Contribution[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -280,7 +284,6 @@ export const mockGetContributionSummary = (userId: string): Promise<Contribution
   });
 };
 
-// Mock Statements
 export const mockGenerateStatement = (
   userId: string,
   filter: StatementFilter
@@ -328,7 +331,6 @@ export const mockGenerateStatement = (
   });
 };
 
-// Mock Notifications
 export const mockGetNotifications = (userId: string): Promise<Notification[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {

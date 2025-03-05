@@ -5,19 +5,18 @@ import MemberProfile from "../components/dashboard/MemberProfile";
 import ContributionStats from "../components/dashboard/ContributionStats";
 import DataVisualizations from "../components/dashboard/DataVisualizations";
 // import { useContributions } from "../../hooks/useContributions";
-// import { useAuth } from "../../contexts/AuthContext";
 // import MemberProfile from "../profile/MemberProfile";
 // import ContributionStats from "../contributions/ContributionStats";
 // import DataVisualizations from "../visualizations/DataVisualizations";
 
 const DashboardPage: React.FC = () => {
-  const { authState } = useAuth();
-  const { 
-    fetchContributions, 
-    isLoading, 
-    error, 
+  const { authState, logout } = useAuth();
+  const {
+    fetchContributions,
+    isLoading,
+    error,
     contributions,
-    getContributionStats 
+    getContributionStats
   } = useContributions();
 
   useEffect(() => {
@@ -42,22 +41,26 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Member Dashboard</h1>
-      
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold mb-6">Member Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-6" onClick={logout}>Log out</h1>
+      </div>
+
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
         <div className="lg:col-span-1">
           <MemberProfile user={authState.user} />
         </div>
-        
+
         {/* Right column (2/3 width on large screens) */}
         <div className="lg:col-span-2">
           <div className="mb-6">
             <ContributionStats stats={stats} />
           </div>
-          
+
           <div>
-            <DataVisualizations 
+            <DataVisualizations
               // contributions={contributions} 
               // monthlyData={stats.monthlyData} 
               userId={authState.user?.id}

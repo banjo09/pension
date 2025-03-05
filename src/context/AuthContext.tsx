@@ -1,11 +1,12 @@
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect } from 'react';
 import { LoginCredentials, AuthState } from '../types/auth.types';
 import { User } from '../types/user.types';
 import { getCurrentUser, loginUser, logoutUser } from '../services/authService';
 
-type AuthAction = 
+type AuthAction =
   | { type: 'LOGIN_REQUEST' }
   | { type: 'LOGIN_SUCCESS'; payload: User }
+  | { type: 'REDIRECT'; payload: User }
   | { type: 'LOGIN_FAILURE'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'CLEAR_ERROR' };
@@ -20,6 +21,7 @@ interface AuthContextType {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  shouldRedirect: false,
   isLoading: false,
   error: null
 };
@@ -50,6 +52,14 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: null,
         error: action.payload
       };
+    case 'REDIRECT':
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload,
+        shouldRedirect: true,
+        error: null
+      };
     case 'LOGOUT':
       return {
         ...state,
@@ -74,10 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         dispatch({ type: 'LOGIN_REQUEST' });
         const user = await getCurrentUser();
+        console.log('user', user)
         if (user) {
-          dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+          dispatch({ type: 'REDIRECT', payload: user });
         } else {
-          dispatch({ type: 'LOGOUT' });
+          // dispatch({ type: 'LOGOUT' });
+          dispatch({ type: 'LOGIN_FAILURE', payload: 'login failed' });
         }
       } catch (error) {
         dispatch({ type: 'LOGOUT' });
@@ -93,9 +105,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const user = await loginUser(credentials);
       dispatch({ type: 'LOGIN_SUCCESS', payload: user });
     } catch (error) {
-      dispatch({ 
-        type: 'LOGIN_FAILURE', 
-        payload: error instanceof Error ? error.message : 'Failed to login' 
+      dispatch({
+        type: 'LOGIN_FAILURE',
+        payload: error instanceof Error ? error.message : 'Failed to login'
       });
     }
   };
@@ -110,12 +122,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        authState, 
-        login, 
-        logout, 
-        clearError 
+    <AuthContext.Provider
+      value={{
+        authState,
+        login,
+        logout,
+        clearError
       }}
     >
       {children}

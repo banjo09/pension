@@ -3,13 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./services/store";
 
-// Pages
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import ContributionsPage from "./pages/ContributionsPage";
 import StatementsPage from "./pages/StatementsPage";
 
-// Components
 import AuthGuard from "./components/auth/AuthGuard";
 // import ToastNotification from "./components/notifications/ToastNotification";
 import { NotificationProvider } from "./context/NotificationContext";
@@ -23,11 +21,9 @@ const App: React.FC = () => {
           <Router>
             <div className="min-h-screen font-sans antialiased bg-gray-50">
               <Routes>
-                {/* Public routes */}
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Protected routes */}
                 <Route
                   path="/dashboard"
                   element={

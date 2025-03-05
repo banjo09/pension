@@ -10,8 +10,9 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
-  const { authState: { user } } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  // const { authState: { user } } = useAuth();
+  // const isAdmin = user?.role === 'admin';
+  const isAdmin = false;
 
   return (
     <>
@@ -133,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         <div className="absolute bottom-0 left-0 justify-center p-4 space-x-4 w-full bg-white border-t border-gray-200">
           <div className="flex items-center p-2 text-sm text-gray-600">
             <div className="font-medium">
-              {user?.fullName} <span className="text-blue-600">({user?.role})</span>
+              {/* {user?.fullName} <span className="text-blue-600">({user?.role})</span> */}
             </div>
           </div>
         </div>
