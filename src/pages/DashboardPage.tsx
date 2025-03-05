@@ -4,8 +4,6 @@ import { useContributions } from "../components/hooks/useContributions";
 import MemberProfile from "../components/dashboard/MemberProfile";
 import ContributionStats from "../components/dashboard/ContributionStats";
 import DataVisualizations from "../components/dashboard/DataVisualizations";
-import Navbar from "../components/shared/Navbar";
-import Sidebar from "../components/shared/Sidebar";
 import Loading from "../components/shared/Loading";
 
 const DashboardPage: React.FC = () => {
@@ -15,7 +13,7 @@ const DashboardPage: React.FC = () => {
     fetchContributions,
     isLoading,
     error,
-    contributions,
+    // contributions,
     getContributionStats
   } = useContributions();
 
