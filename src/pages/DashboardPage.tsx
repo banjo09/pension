@@ -4,10 +4,9 @@ import { useContributions } from "../components/hooks/useContributions";
 import MemberProfile from "../components/dashboard/MemberProfile";
 import ContributionStats from "../components/dashboard/ContributionStats";
 import DataVisualizations from "../components/dashboard/DataVisualizations";
-// import { useContributions } from "../../hooks/useContributions";
-// import MemberProfile from "../profile/MemberProfile";
-// import ContributionStats from "../contributions/ContributionStats";
-// import DataVisualizations from "../visualizations/DataVisualizations";
+import Navbar from "../components/shared/Navbar";
+import Sidebar from "../components/shared/Sidebar";
+import Loading from "../components/shared/Loading";
 
 const DashboardPage: React.FC = () => {
   const { authState, logout } = useAuth();
@@ -26,7 +25,8 @@ const DashboardPage: React.FC = () => {
   }, [authState.user?.id, fetchContributions]);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading dashboard...</div>;
+    return <Loading />;
+    // return <div className="flex justify-center items-center h-screen">Loading dashboard...</div>;
   }
 
   if (error) {
@@ -40,35 +40,55 @@ const DashboardPage: React.FC = () => {
   const stats = getContributionStats();
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="flex justify-between">
+    // <div className="container mx-auto px-4 py-6">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar isOpen={true} toggleSidebar={() => { }} />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Navbar
+          toggleSidebar={() => { }}
+          toggleNotifications={() => { }}
+        />
+        <main className="flex-1 p-6 overflow-y-auto">
+          {/* <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-6">Member Dashboard</h1>
         <h1 className="text-2xl font-bold mb-6" onClick={logout}>Log out</h1>
-      </div>
-
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-1">
-          <MemberProfile user={authState.user} />
-        </div>
-
-        {/* Right column (2/3 width on large screens) */}
-        <div className="lg:col-span-2">
-          <div className="mb-6">
-            <ContributionStats stats={stats} />
+      </div> */}
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-semibold text-gray-800">Member Dashboard</h1>
+            <button
+              onClick={logout}
+              className="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition"
+            >
+              Log out
+            </button>
           </div>
 
-          <div>
-            <DataVisualizations
-              // contributions={contributions} 
-              // monthlyData={stats.monthlyData} 
-              userId={authState.user?.id}
-              isLoading={isLoading}
-              error={error ?? undefined}
-            />
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column */}
+            <div className="lg:col-span-1">
+              <MemberProfile user={authState.user} />
+            </div>
+
+            {/* Right column (2/3 width on large screens) */}
+            <div className="lg:col-span-2">
+              <div className="mb-6">
+                <ContributionStats stats={stats} />
+              </div>
+
+              <div>
+                <DataVisualizations
+                  // contributions={contributions} 
+                  // monthlyData={stats.monthlyData} 
+                  userId={authState.user?.id}
+                  isLoading={isLoading}
+                  error={error ?? undefined}
+                />
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
+        {/* </div> */}
       </div>
     </div>
   );
