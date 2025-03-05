@@ -1,72 +1,187 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { Suspense, lazy } from "react";
+import { 
+  BrowserRouter as Router, 
+  Routes, 
+  Route, 
+  Navigate 
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./services/store";
-
-import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
-import ContributionsPage from "./pages/ContributionsPage";
-import StatementsPage from "./pages/StatementsPage";
-
+// import { ErrorBoundary } from "react-error-boundary";
+import Navigation from "./components/shared/Navigation";
 import AuthGuard from "./components/auth/AuthGuard";
-// import ToastNotification from "./components/notifications/ToastNotification";
 import { NotificationProvider } from "./context/NotificationContext";
 import { AuthProvider } from "./context/AuthContext";
+import Loading from "./components/shared/Loading";
+import ErrorFallback from "./components/shared/ErrorFallback";
 
-const App: React.FC = () => {
+// Lazy load routes
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const ContributionsPage = lazy(() => import("./pages/ContributionsPage"));
+const StatementsPage = lazy(() => import("./pages/StatementsPage"));
+const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
+const MembersPage = lazy(() => import("./pages/MembersPage"));
+
+const App: React.FC = React.memo(() => {
   return (
     <Provider store={store}>
       <AuthProvider>
         <NotificationProvider>
           <Router>
-            <div className="min-h-screen font-sans antialiased bg-gray-50">
-              <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/login" element={<LoginPage />} />
+            <Routes>
+              {/* Authentication routes without Navigation */}
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<LoginPage />} />
 
-                <Route
-                  path="/dashboard"
+              {/* Protected routes with Navigation */}
+              <Route element={<Navigation />}>
+                <Route 
+                  path="/dashboard" 
                   element={
                     <AuthGuard>
                       <DashboardPage />
                     </AuthGuard>
-                  }
+                  } 
                 />
-                <Route
-                  path="/contributions"
+                <Route 
+                  path="/contributions" 
                   element={
                     <AuthGuard>
                       <ContributionsPage />
                     </AuthGuard>
-                  }
+                  } 
                 />
-                <Route
-                  path="/statements"
+                <Route 
+                  path="/statements" 
                   element={
                     <AuthGuard>
                       <StatementsPage />
                     </AuthGuard>
-                  }
+                  } 
                 />
-
-                {/* Fallback route */}
-                <Route path="*" element={<LoginPage />} />
-              </Routes>
-              {/* <ToastNotification
-                message={notification.message}
-                type={notification.type}
-                onClose={() => {}}
-                id={(Math.random() * 100).toString()}
-              /> */}
-            </div>
+                <Route 
+                  path="/analytics" 
+                  element={
+                    <AuthGuard>
+                      <AnalyticsPage />
+                    </AuthGuard>
+                  } 
+                />
+                <Route 
+                  path="/members" 
+                  element={
+                    <AuthGuard>
+                      <MembersPage />
+                    </AuthGuard>
+                  } 
+                />
+              </Route>
+            </Routes>
           </Router>
         </NotificationProvider>
       </AuthProvider>
     </Provider>
   );
-};
+});
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React from "react";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import { Provider } from "react-redux";
+// import { store } from "./services/store";
+
+// import LoginPage from "./pages/LoginPage";
+// import DashboardPage from "./pages/DashboardPage";
+// import ContributionsPage from "./pages/ContributionsPage";
+// import StatementsPage from "./pages/StatementsPage";
+
+// import AuthGuard from "./components/auth/AuthGuard";
+// // import ToastNotification from "./components/notifications/ToastNotification";
+// import { NotificationProvider } from "./context/NotificationContext";
+// import { AuthProvider } from "./context/AuthContext";
+
+// const App: React.FC = () => {
+//   return (
+//     <Provider store={store}>
+//       <AuthProvider>
+//         <NotificationProvider>
+//           <Router>
+//             <div className="min-h-screen font-sans antialiased bg-gray-50">
+//               <Routes>
+//                 <Route path="/" element={<LoginPage />} />
+//                 <Route path="/login" element={<LoginPage />} />
+
+//                 <Route
+//                   path="/dashboard"
+//                   element={
+//                     <AuthGuard>
+//                       <DashboardPage />
+//                     </AuthGuard>
+//                   }
+//                 />
+//                 <Route
+//                   path="/contributions"
+//                   element={
+//                     <AuthGuard>
+//                       <ContributionsPage />
+//                     </AuthGuard>
+//                   }
+//                 />
+//                 <Route
+//                   path="/statements"
+//                   element={
+//                     <AuthGuard>
+//                       <StatementsPage />
+//                     </AuthGuard>
+//                   }
+//                 />
+
+//                 {/* Fallback route */}
+//                 <Route path="*" element={<LoginPage />} />
+//               </Routes>
+//               {/* <ToastNotification
+//                 message={notification.message}
+//                 type={notification.type}
+//                 onClose={() => {}}
+//                 id={(Math.random() * 100).toString()}
+//               /> */}
+//             </div>
+//           </Router>
+//         </NotificationProvider>
+//       </AuthProvider>
+//     </Provider>
+//   );
+// };
+
+// export default App;
 
 
 

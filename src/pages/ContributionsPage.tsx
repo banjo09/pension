@@ -95,9 +95,9 @@ const ContributionsPage: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar isOpen={true} toggleSidebar={() => { }} />
+      {/* <Sidebar isOpen={true} toggleSidebar={() => { }} /> */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar toggleSidebar={() => { }} toggleNotifications={() => { }} />
+        {/* <Navbar toggleSidebar={() => { }} toggleNotifications={() => { }} /> */}
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <h1 className="text-3xl font-semibold text-gray-800">Contributions</h1>

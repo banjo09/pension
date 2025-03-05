@@ -13,7 +13,7 @@ const loginSchema = yup.object({
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  // const { authState, login, clearError } = useAuth();
+  const { authState, login, clearError } = useAuth();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginCredentials>({
@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
   const onSubmit = async (data: LoginCredentials) => {
     console.log('data', data)
     try {
-      // await login(data);
+      await login(data);
       navigate('/dashboard');
     } catch (error) {
       console.log('error', error)
